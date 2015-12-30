@@ -1,0 +1,23 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        ""
+    ],
+    "companyName": "tkw01536",
+    "longName": "Compact Watch Face",
+    "projectType": "native",
+    "resources": {
+        "media": []
+    },
+    "sdkVersion": "3",
+    "shortName": "CWF",
+    "targetPlatforms": [
+        "basalt",
+        "chalk"
+    ],
+    "uuid": "beeacab0-6ea9-4d44-8dea-b6da8b001a4a",
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": true
+    }
+}
