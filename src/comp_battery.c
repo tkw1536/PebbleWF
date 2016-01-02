@@ -8,7 +8,7 @@ void component_battery_init (Layer *window_layer, GRect *bounds) {
   // called on creation of the app
   
   // Create a layer for the battery
-  s_bat_layer = text_layer_create(GRect(0, PBL_IF_ROUND_ELSE(128, 120), (*bounds).size.w, 20));
+  s_bat_layer = text_layer_create(GRect(0, PBL_IF_ROUND_ELSE(133, 125), (*bounds).size.w, 20));
   
   text_layer_set_background_color(s_bat_layer, WATCHFACE_TEXT_BACKGROUND_COLOR);
   text_layer_set_text_color(s_bat_layer, WATCHFACE_BATTERY_COLOR);
