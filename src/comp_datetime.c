@@ -5,24 +5,6 @@
 #include "watch_format.h"
 #include "constants.h"
 
-void component_datetime_update () {
-  // updates date and time on the watch
-  
-  // get the current time
-  time_t temp = time(NULL); 
-  struct tm *tick_time = localtime(&temp);
-
-  // update the buffer for the time layer
-  static char s_buffer_t[8];
-  format_time(tick_time, s_buffer_t, sizeof(s_buffer_t)); 
-  text_layer_set_text(s_time_layer, s_buffer_t);
-  
-  // update the buffer for the date layer
-  static char s_buffer_d[20];
-  format_date(tick_time, s_buffer_d, sizeof(s_buffer_d)); 
-  text_layer_set_text(s_date_layer, s_buffer_d);
-}
-
 void component_datetime_init (Layer *window_layer, GRect *bounds) {
   // called on creation of the app
   
@@ -51,7 +33,24 @@ void component_datetime_init (Layer *window_layer, GRect *bounds) {
 
 static void component_datetime_tick(struct tm *tick_time, TimeUnits units_changed) {
   // called whenever the datetime component updates
-  component_datetime_update(); 
+
+  // update the buffer for the time layer
+  static char s_buffer_t[8];
+  format_time(tick_time, s_buffer_t, sizeof(s_buffer_t)); 
+  text_layer_set_text(s_time_layer, s_buffer_t);
+  
+  // update the buffer for the date layer
+  static char s_buffer_d[20];
+  format_date(tick_time, s_buffer_d, sizeof(s_buffer_d)); 
+  text_layer_set_text(s_date_layer, s_buffer_d);
+}
+
+void component_datetime_update () {
+  // updates date and time on the watch
+  time_t temp = time(NULL); 
+  struct tm *tick_time = localtime(&temp);
+  
+  component_datetime_tick(tick_time, MINUTE_UNIT);
 }
 
 void component_datetime_register () {

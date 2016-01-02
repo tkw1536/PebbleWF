@@ -3,16 +3,6 @@
 
 #include "constants.h"
 
-void component_blue_update () {
-  // updates battery on the watch
-  
-  // check if we are currently connected
-  bool connected = connection_service_peek_pebble_app_connection();
-  
-  // Hide or show layer
-  layer_set_hidden((Layer *) s_blue_layer, connected);
-}
-
 void component_blue_init (Layer *window_layer, GRect *bounds) {
   // called on creation of the app
   
@@ -31,7 +21,15 @@ void component_blue_init (Layer *window_layer, GRect *bounds) {
 
 static void component_blue_tick(bool connected) {
   // called whenever the bluetooth component updates
-  component_blue_update(); 
+  
+  // Hide or show layer
+  layer_set_hidden((Layer *) s_blue_layer, connected);
+}
+
+void component_blue_update () {
+  // updates battery on the watch
+  
+  component_blue_tick(connection_service_peek_pebble_app_connection());
 }
 
 void component_blue_register () {

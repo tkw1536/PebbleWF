@@ -4,31 +4,14 @@
 #include "watch_format.h"
 #include "constants.h"
 
-static void set_battery_color(BatteryChargeState charge_state); 
-
-void component_battery_update () {
-  // updates battery on the watch
-  
-  // get the current BatteryChargeState
-  BatteryChargeState charge_state = battery_state_service_peek();
-  
-  // update the color
-  set_battery_color(charge_state);
-  
-  // update the buffer for the time layer
-  static char s_buffer_b[10];
-  format_battery(charge_state, s_buffer_b, sizeof(s_buffer_b)); 
-  text_layer_set_text(s_bat_layer, s_buffer_b);
-}
-
 void component_battery_init (Layer *window_layer, GRect *bounds) {
   // called on creation of the app
   
   // Create a layer for the battery
   s_bat_layer = text_layer_create(GRect(0, PBL_IF_ROUND_ELSE(128, 120), (*bounds).size.w, 20));
   
-  text_layer_set_background_color(s_bat_layer, WATCHFACE_BATTERY_DIS_BACKGROUND);
-  text_layer_set_text_color(s_bat_layer, WATCHFACE_BATTERY_00_COLOR);
+  text_layer_set_background_color(s_bat_layer, WATCHFACE_TEXT_BACKGROUND_COLOR);
+  text_layer_set_text_color(s_bat_layer, WATCHFACE_BATTERY_COLOR);
   text_layer_set_text(s_bat_layer, "000 %");
   text_layer_set_font(s_bat_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
   text_layer_set_text_alignment(s_bat_layer, GTextAlignmentCenter);
@@ -39,7 +22,20 @@ void component_battery_init (Layer *window_layer, GRect *bounds) {
 
 static void component_battery_tick(BatteryChargeState charge_state) {
   // called whenever the battery component updates
-  component_battery_update(); 
+  
+  // update the color
+  set_battery_color(charge_state);
+  
+  // update the buffer for the time layer
+  static char s_buffer_b[10];
+  format_battery(charge_state, s_buffer_b, sizeof(s_buffer_b)); 
+  text_layer_set_text(s_bat_layer, s_buffer_b);
+}
+
+void component_battery_update () {
+  // updates battery on the watch
+  
+  component_battery_tick(battery_state_service_peek());
 }
 
 void component_battery_register () {
@@ -55,6 +51,12 @@ void component_battery_deinit () {
 }
 
 void set_battery_color(BatteryChargeState charge_state) {
+  
+  // if we are charging, we can set the color immediatly
+  if (charge_state.is_charging) {
+    text_layer_set_background_color(s_bat_layer, WATCHFACE_BATTERY_CHARGE_BACKGROUND);
+    return; 
+  }
   
   // get a new color for the text
   GColor newcolor = GColorClear; 
@@ -96,9 +98,6 @@ void set_battery_color(BatteryChargeState charge_state) {
       break;
   }
   
-  // and set it
-  text_layer_set_text_color(s_bat_layer, newcolor);
-  
-  // set the background color depending if we are charging or not
-  text_layer_set_background_color(s_bat_layer, charge_state.is_charging ? WATCHFACE_BATTERY_CHR_BACKGROUND : WATCHFACE_BATTERY_DIS_BACKGROUND);
+  // set the background color
+  text_layer_set_background_color(s_bat_layer, newcolor);
 }
